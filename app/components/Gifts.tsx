@@ -68,54 +68,51 @@ export default function Gifts({ invitation }: GiftsProps) {
   };
 
   const copyClabe = async () => {
-  if (!gifts.cash.clabe) return;
+    if (!gifts.cash.clabe) return;
 
-  try {
-    // Método moderno
-    if (
-      navigator.clipboard &&
-      window.isSecureContext
-    ) {
-      await navigator.clipboard.writeText(gifts.cash.clabe);
+    try {
+      // Método moderno
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(gifts.cash.clabe);
 
-      setCopied(true);
+        setCopied(true);
 
-      setTimeout(() => {
-        setCopied(false);
-      }, 2000);
+        setTimeout(() => {
+          setCopied(false);
+        }, 2000);
 
-      return;
+        return;
+      }
+
+      // Método de respaldo para navegadores móviles
+      const textArea = document.createElement("textarea");
+
+      textArea.value = gifts.cash.clabe;
+
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      textArea.style.top = "0";
+
+      document.body.appendChild(textArea);
+
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand("copy");
+
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        setCopied(true);
+
+        setTimeout(() => {
+          setCopied(false);
+        }, 2000);
+      }
+    } catch {
+      setCopied(false);
     }
-
-    // Método de respaldo para navegadores móviles
-    const textArea = document.createElement("textarea");
-
-    textArea.value = gifts.cash.clabe;
-
-    textArea.style.position = "fixed";
-    textArea.style.left = "-9999px";
-    textArea.style.top = "0";
-
-    document.body.appendChild(textArea);
-
-    textArea.focus();
-    textArea.select();
-
-    const successful = document.execCommand("copy");
-
-    document.body.removeChild(textArea);
-
-    if (successful) {
-      setCopied(true);
-
-      setTimeout(() => {
-        setCopied(false);
-      }, 2000);
-    }
-  } catch {
-    setCopied(false);
-  }
-};
+  };
 
   return (
     <section
@@ -189,8 +186,16 @@ export default function Gifts({ invitation }: GiftsProps) {
                     Ver mesa de regalos
                   </p>
 
-                  <span className="absolute bottom-3 right-4 text-sm text-[#A8B09A] transition-transform duration-300 group-hover:translate-x-1">
-                    ↗
+                  {/* Flecha dibujada con CSS para evitar renderizado como emoji en iPhone */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute bottom-3 right-4 flex h-4 w-4 items-center justify-center text-[#A8B09A] transition-transform duration-300 group-hover:translate-x-1"
+                  >
+                    <span className="relative block h-3 w-3">
+                      <span className="absolute right-0 top-0 h-[5px] w-[5px] border-r border-t border-[#A8B09A]" />
+
+                      <span className="absolute bottom-[2px] left-[1px] h-px w-[10px] rotate-[-45deg] origin-left bg-[#A8B09A]" />
+                    </span>
                   </span>
                 </a>
               ))}
